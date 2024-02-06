@@ -1,0 +1,62 @@
+import requests
+import random
+import os
+
+from bs4 import BeautifulSoup as bs
+import telebot
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+API_KEY: str | None = os.environ.get('API_KEY', None)
+URL: str = 'https://anekdot.ru/last/good'
+
+if API_KEY is None:
+    raise KeyError('Provide API_KEY in .env')
+
+req = requests.get(URL)
+
+def parser(res) -> list:
+    soup = bs(res.text, 'html.parser')
+    texts = soup.find_all('div', class_='text')
+    return [text.text for text in texts]
+
+jokes = parser(req)
+
+def get_random_joke(lst: list) -> str:
+    return random.choice(lst)
+
+
+def get_joke():
+    return get_random_joke(jokes)
+
+
+
+# list_of_jokes = parser(URL)
+# print(get_random_joke(list_of_jokes))
+
+
+
+bot = telebot.TeleBot(API_KEY)
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, 'Hi there! Send me a number form 0 to 9')
+
+
+@bot.message_handler(commands=['stop'])
+def stop(message):
+    bot.send_message(message.chat.id, 'Bye-bye!')
+
+
+@bot.message_handler(content_types=['text'])
+def send_joke(message):
+    if message.text.lower() in [str(i) for i in range(10)]:
+        bot.send_message(message.chat.id, get_joke())
+    else:
+        bot.send_message(message.chat.id, 'Send me a number from 0 to 9')
+
+
+bot.polling()

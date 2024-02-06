@@ -1,0 +1,39 @@
+# Base (parent) class
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        print(f"{self.name} makes a sound.")
+
+
+# Derived (child) class
+class Dog(Animal):
+    def speak(self):
+        print(f"{self.name} barks.")
+
+
+# Derived (child) class
+class Cat(Animal):
+    def speak(self):
+        print(f"{self.name} meows.")
+
+
+class Sneak(Animal):
+    pass
+
+
+# Create objects of the derived classes
+# dog = Dog('Buddy')
+# cat = Cat('Whiskers')
+# sneak = Sneak('Teo')
+
+# animals: list[Animal] = [dog, cat, sneak]
+
+animals: list[Animal] = [Dog('Buddy'), Cat('Whiskers'), Sneak('Teo')]
+
+
+for animal in animals:
+    # Call the 'speak' method on the object
+    animal.speak()
+
